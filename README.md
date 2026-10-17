@@ -26,8 +26,8 @@ licencji wklejony w panelu.
 | | Darmowa | Pakiety płatne (Start / Firma / Sieć / Bez limitu) |
 |---|---|---|
 | Cena | 0 zł, bezterminowo | wg [cennika](https://cycksef.pl/#cennik), rozliczenie miesięczne lub roczne |
-| Limit faktur | do 50 / mies. | od 100 / mies. do bez limitu |
-| Konta użytkowników | 2 | więcej, zależnie od pakietu |
+| Limit faktur | do 50 / mies. | Start 300, Firma 2000, Sieć 10 000 / mies., Bez limitu |
+| Konta użytkowników | 2 | Start 5, Firma 15, Sieć 40, Bez limitu |
 | Automatyczne pobieranie faktur z KSeF | tak | tak |
 | Lista i szczegóły faktur, tagi i statusy | tak | tak |
 | Przypisanie do oddziałów + reguły automatyczne | tak | tak |
