@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Wsparcie dla pakietów płatnych
+    url: https://cycksef.pl/#kontakt
+    about: Klienci z aktywną licencją płatną — kontakt e-mail (hello@cycrusdynamics.com), nie przez publiczne Issues.
+  - name: Cennik i pakiety
+    url: https://cycksef.pl/#cennik
+    about: Zakres wersji Darmowej, pakiety płatne, demo.
+  - name: Regulamin (w tym § 8 Licencja Darmowa)
+    url: https://cycksef.pl/regulamin/
+    about: Wiążące warunki korzystania z CycKSeF.
