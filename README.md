@@ -1,14 +1,11 @@
 # CycKSeF
 
-CycKSeF to program self-hosted do obsługi faktur z Krajowego Systemu e-Faktur (KSeF):
-sam pobiera faktury z KSeF, klasyfikuje je (towar / koszt), przypisuje do oddziałów
-według reguł i pilnuje statusów (nieprzejrzana, w toku, załatwiona, zaakceptowana,
-niezasadna). Instalujesz go na własnym serwerze — faktury, kontrahenci i certyfikat
-KSeF zostają u Ciebie.
+Wieloużytkownikowy system do KSeF z API, instalowany na własnym serwerze.
+Pobiera faktury z KSeF, przypisuje je do oddziałów, prowadzi statusy i role
+użytkowników, a przez API łączy się z systemami sprzedaży i księgowymi.
 
-To repozytorium **nie zawiera kodu źródłowego** (CycKSeF jest programem zamkniętym).
-Służy jako strona projektu: instrukcja instalacji, warunki wersji Darmowej
-i zgłoszenia przez [Issues](https://github.com/Cycrus-Dynamics/CycKSeF/issues).
+To repozytorium zawiera instrukcję instalacji i zgłoszenia ([Issues](https://github.com/Cycrus-Dynamics/CycKSeF/issues)).
+Kod źródłowy nie jest publikowany.
 
 - Strona produktu i cennik: <https://cycksef.pl/#cennik>
 - Demo z przykładowymi danymi: <https://demo.cycksef.pl> (logowanie podane na stronie
@@ -39,7 +36,7 @@ licencji wklejony w panelu.
 | Raporty Excel i harmonogram e-mail | — | tak |
 | Wysyłka dokumentów do oddziałów (SMB / FTP / SFTP / S3) | — | tak |
 | API / integracje | — | tak (pakiet Sieć i wyżej) |
-| Wsparcie | tylko GitHub Issues, bez gwarancji terminu | e-mail (priorytetowe w wyższych pakietach) |
+| Wsparcie | GitHub Issues | e-mail |
 
 Przejście na pakiet płatny nie wymaga reinstalacji — klucz wklejasz w panelu,
 dane i konfiguracja zostają (patrz [Aktywacja płatnej licencji](#aktywacja-płatnej-licencji)).
@@ -407,9 +404,8 @@ Najczęstsze problemy:
 
 ## Wsparcie i zgłoszenia
 
-- **Wersja Darmowa:** wyłącznie przez [GitHub Issues](https://github.com/Cycrus-Dynamics/CycKSeF/issues)
-  w tym repozytorium, bez gwarancji terminu ani faktu odpowiedzi. Skorzystaj z szablonów
-  „Zgłoszenie błędu" i „Pytanie".
+- **Wersja Darmowa:** [GitHub Issues](https://github.com/Cycrus-Dynamics/CycKSeF/issues)
+  (szablony „Zgłoszenie błędu" i „Pytanie").
 - **Pakiety płatne:** wsparcie e-mail — <hello@cycrusdynamics.com> albo
   <https://cycksef.pl/#kontakt>.
 

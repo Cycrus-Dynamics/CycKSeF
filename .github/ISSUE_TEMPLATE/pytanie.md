@@ -15,7 +15,6 @@ Zanim zapytasz, sprawdź README tego repozytorium oraz pełną instrukcję w zai
 paczce (/opt/cycksef/docs/INSTALACJA.md — sekcje „Rozwiązywanie problemów" i „FAQ").
 Instrukcja dla Windows: https://cycksef.pl/windows/
 
-Wsparcie wersji Darmowej odbywa się wyłącznie tutaj, bez gwarancji terminu odpowiedzi.
 Klienci z pakietem płatnym: hello@cycrusdynamics.com albo https://cycksef.pl/#kontakt
 Pytania o cennik, wycenę i pakiety płatne: https://cycksef.pl/#cennik i https://cycksef.pl/#kontakt
 -->

@@ -12,7 +12,6 @@ NIE wklejaj: danych faktur, numerów KSeF, certyfikatów ani tokenów KSeF, hase
 pliku .env, poswiadczenia-admina.txt, NIP-ów kontrahentów, danych osobowych.
 Zamaskuj takie dane w logach PRZED wysłaniem (np. zastąp je "***").
 
-Wsparcie wersji Darmowej odbywa się wyłącznie tutaj, bez gwarancji terminu odpowiedzi.
 Klienci z pakietem płatnym: hello@cycrusdynamics.com albo https://cycksef.pl/#kontakt
 -->
 
