@@ -99,16 +99,52 @@ Skrypt sprawdza system, dogrywa `tar`/`coreutils` jeśli ich brak, pobiera paczk
 wdrożeniową, **weryfikuje jej sumę SHA256**, rozpakowuje do `/opt/cycksef` i uruchamia
 kreator konfiguracji.
 
-**Wolisz najpierw przejrzeć, co uruchamiasz?**
+**Pakiet 3.5.0:** w trakcie testów strona miała jeszcze wersję 3.4.0.
+Poniższe adresy wersji 3.5.0 zadziałają po jej publikacji. Jeśli otrzymałeś paczkę
+od wydawcy, zacznij od sprawdzenia sumy w katalogu z tymi plikami.
+
+### Linux — paczka i kreator bez bootstrapu
 
 ```bash
-curl -fsSLO https://cycksef.pl/install.sh
-less install.sh                                    # przeczytaj przed uruchomieniem jako root
-curl -fsSLO https://cycksef.pl/cycksef-deploy-latest.tar.gz
-curl -fsSLO https://cycksef.pl/cycksef-deploy-latest.tar.gz.sha256
-sha256sum -c cycksef-deploy-latest.tar.gz.sha256   # zweryfikuj sam, niezależnie od install.sh
-sudo bash install.sh --package ./cycksef-deploy-latest.tar.gz
+sudo -i
+mkdir -p /root/cycksef-paczka
+cd /root/cycksef-paczka
+curl -fSLO https://cycksef.pl/cycksef-deploy-3.5.0.tar.gz
+curl -fSLO https://cycksef.pl/cycksef-deploy-3.5.0.tar.gz.sha256
+sha256sum -c cycksef-deploy-3.5.0.tar.gz.sha256
+# Kontynuuj tylko po wyniku OK:
+install -d -m 755 /opt/cycksef
+tar xzf cycksef-deploy-3.5.0.tar.gz -C /opt/cycksef
+cd /opt/cycksef
+./install.sh
 ```
+
+Bootstrap można przejrzeć i uruchomić z własną paczką:
+
+```bash
+curl -fSLo bootstrap.sh https://cycksef.pl/install.sh
+less bootstrap.sh
+sudo bash bootstrap.sh --package ./cycksef-deploy-3.5.0.tar.gz
+```
+
+Plik `.sha256` musi leżeć obok archiwum. Wariant lokalny dotyczy samej paczki —
+pakiety systemowe i obrazy Docker nadal wymagają internetu.
+Całkowicie ręczny Docker Compose (sekrety, uprawnienia, SSL, migracje i administrator)
+opisuje punkt 4 `docs/INSTALACJA.md` dołączonej do paczki; zakres testu na żywo
+określa raport wydania.
+
+Tryb bezobsługowy po rozpakowaniu:
+
+```bash
+sudo cp /opt/cycksef/answers.env.example /root/answers.env
+sudo chmod 600 /root/answers.env
+sudo nano /root/answers.env
+sudo /opt/cycksef/install.sh --dry-run --unattended --answers /root/answers.env
+sudo /opt/cycksef/install.sh --unattended --answers /root/answers.env
+```
+
+Uzupełnij domenę/IP, dane firmy i e-mail. Bez certyfikatów: `KSEF_AUTH_MODE=certificate`
+i cztery puste ścieżki `*_SRC`; bez logowania do GHCR: puste `REGISTRY_USER`.
 
 **Podgląd bez zmian** (co instalator by zrobił) — z katalogu `/opt/cycksef`:
 
@@ -126,13 +162,16 @@ Kreator przechodzi 9 kroków; pytania są tylko w trzech:
    porty HTTP/HTTPS.
 2. **Rejestr obrazów** — domyślnie `ghcr.io/cycrus-dynamics`, bez pytań o login i hasło.
 3. **Konfiguracja** — dane KSeF (środowisko + certyfikaty albo token; można pominąć
-   i dokończyć w panelu), dane sprzedawcy, SMTP (opcjonalnie), strefa czasowa,
+   i dokończyć w panelu; przy `certificate` Enter odkłada wgrywanie plików), dane sprzedawcy, SMTP (opcjonalnie), strefa czasowa,
    autoaktualizacje (domyślnie wyłączone).
 
 Kreator **nie pyta** o klucz licencji (wklejasz go później w panelu) ani o login/hasło
 administratora (generuje je sam).
 
 ### Windows — PowerShell jako Administrator
+
+Windows sprawdzono tylko statycznie względem skryptów i testów; nie wykonano
+testu na żywo z Docker Desktop w ramach tego zadania.
 
 Zainstaluj i uruchom Docker Desktop (ikona wieloryba w zasobniku ma przestać się ruszać),
 a potem w PowerShellu uruchomionym **jako Administrator**:
@@ -185,14 +224,15 @@ Szczegóły, typowe problemy (WSL2, wirtualizacja, antywirus) i różnice wzglę
    zapisuje się osobno — kreator można zamknąć i wznowić, albo pominąć i wrócić do niego
    z menu. Certyfikaty są walidowane i szyfrowane przed zapisem; nie trzeba kopiować
    ich na serwer. Jeśli nie masz jeszcze certyfikatów KSeF, dokończ konfigurację później
-   w **Konfiguracja → Połączenie z KSeF** (jest tam test połączenia).
+   w **Konfiguracja KSeF → Połączenie z KSeF** (jest tam test połączenia).
 
 4. **Dodaj użytkowników** (Użytkownicy → Dodaj). W wersji Darmowej: 2 konta.
 
 Logowanie e-mailem i hasłem jest domyślne. Klucz FIDO2 albo drugi składnik
 (kod e-mail / TOTP) włącza się zmianą `AUTH_LOGIN_METHODS` w `/opt/cycksef/.env`
 (`password`, `password_email`, `password_totp` albo `fido2` — jedno z nich, nie łącz
-`password` z `fido2`), potem `docker compose restart backend frontend`.
+`password` z `fido2`), potem `docker compose up -d --wait backend frontend` i
+`docker compose exec -T nginx nginx -s reload`.
 
 **Ważne przy backupie i reinstalacji:** zaszyfrowane klucze, token i hasła są powiązane
 z `SECRET_KEY` w `.env`. Zachowaj jego dotychczasową wartość.
@@ -205,7 +245,7 @@ Bez klucza instalacja działa bezterminowo jako wersja Darmowa. Po zakupie pakie
 w [cenniku](https://cycksef.pl/#cennik):
 
 1. Zaloguj się do panelu jako administrator.
-2. **Ustawienia → Licencja** → wklej klucz.
+2. **Licencja → Aktywuj licencję** → wklej klucz.
 
 Dane, faktury i konfiguracja zostają; nic nie instalujesz od nowa. Klucz **nie jest**
 podawany instalatorowi ani wpisywany do pliku konfiguracyjnego. Panel potrzebuje
@@ -216,23 +256,32 @@ instalacji ani startu.
 
 ## Aktualizacja
 
-Linux — z katalogu `/opt/cycksef`:
+Linux — jako root (`sudo -i`), z katalogu `/opt/cycksef`:
 
 ```bash
-./upgrade.sh
+./upgrade.sh --target-tag 11b56fd
 ```
 
 Kroki: obowiązkowy backup → `docker compose pull` → migracje bazy → restart usług →
-health-check. Jeśli backend nie odpowie po aktualizacji, skrypt sam przywraca poprzednie
+przeładowanie nginx i health-check również przez port panelu. Jeśli backend nie odpowie po aktualizacji, skrypt sam przywraca poprzednie
 obrazy; jeśli migracja już się wykonała, ostateczny ratunek to `./restore.sh` z backupu
 sprzed aktualizacji.
+
+Bez `--target-tag` skrypt pobiera tag już zapisany w `.env`; kolejne wydanie
+wymaga wskazania tagu od wydawcy. Nowe skrypty i Compose dostarcza nowa paczka.
 
 Automatyczne aktualizacje nocne są **domyślnie wyłączone** (świadomy opt-in):
 
 ```bash
 sudo ./install-auto-updates.sh --enable
+systemctl list-timers cycksef-auto-update.timer
+sudo ./auto-update.sh --dry-run
 sudo ./install-auto-updates.sh --disable
 ```
+
+Dry-run sprawdza konfigurację i pokazuje plan; nie pobiera obrazów ani nie zmienia
+danych. Timer aktualizuje do `latest`. Wyniki: `auto-update-status.txt`,
+`/var/log/cycksef-auto-update.log`, `journalctl -u cycksef-auto-update.service`.
 
 Windows — pobierz nową paczkę i uruchom instalator ponownie (nie nadpisze `.env` ani danych):
 
@@ -249,7 +298,7 @@ Automatyczne aktualizacje nie są obsługiwane na Windows.
 
 ## Kopia zapasowa i odtwarzanie
 
-Linux — z katalogu `/opt/cycksef`:
+Linux — jako root (`sudo -i`), z katalogu `/opt/cycksef`:
 
 ```bash
 ./backup.sh                 # backups/cycksef-<data-godzina>.tar.gz
@@ -284,7 +333,10 @@ Windows — backup bazy ręcznie (katalog `C:\CycKSeF\deploy`, backupy w `backup
 
 ```powershell
 cd C:\CycKSeF\deploy
-docker compose exec -T db pg_dump -U ksef ksef > backups\backup-$(Get-Date -Format 'yyyyMMdd-HHmmss').sql
+New-Item -ItemType Directory -Force backups | Out-Null
+$nazwa = "backup-$(Get-Date -Format 'yyyyMMdd-HHmmss').sql"
+docker compose exec -T db pg_dump -U ksef -f /tmp/backup.sql ksef
+docker compose cp db:/tmp/backup.sql "backups\$nazwa"
 ```
 
 Regularne backupy na Windows — Harmonogram zadań (Task Scheduler).
@@ -293,13 +345,14 @@ Regularne backupy na Windows — Harmonogram zadań (Task Scheduler).
 
 ## Odinstalowanie
 
-Linux — z katalogu `/opt/cycksef`:
+Linux — jako root (`sudo -i`), z katalogu `/opt/cycksef`:
 
 ```bash
 ./uninstall.sh
 ```
 
-Pyta osobno o: backup przed odinstalowaniem (domyślnie **tak**), usunięcie danych —
+Wyłącza timer aktualizacji i jednostkę autostartu. Pozostawia katalog instalatora,
+backupy i Docker. Pyta osobno o: backup przed odinstalowaniem (domyślnie **tak**), usunięcie danych —
 bazy, Redis, certyfikatów Let's Encrypt (domyślnie **nie**), usunięcie `.env`
 i certyfikatów KSeF z katalogu (domyślnie **nie**). Nic nie usuwa bez pytania.
 
@@ -308,13 +361,15 @@ Windows:
 ```powershell
 # 1. Zatrzymaj i usun kontenery
 cd C:\CycKSeF\deploy
-docker compose down -v
+docker compose down
+# Dopiero po wykonaniu i zachowaniu kopii, jesli chcesz usunac baze:
+# docker compose down -v
 
 # 2. Usun katalog instalacji
 Remove-Item -Recurse -Force C:\CycKSeF
 
 # 3. (Opcjonalnie) usun obrazy Docker
-docker image prune -a
+# Usuwaj tylko obrazy tej instalacji, po sprawdzeniu: docker image ls
 ```
 
 ---
